@@ -1,0 +1,5 @@
+/myenv
+myenv/
+*.pyc 
+__pycache__
+/data
