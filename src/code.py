@@ -13,17 +13,17 @@ class DonationRecord:
         self.ingredients = {key: 0 for key in DonationRecord.get_columns()}
         self.ingredients.update(filter_ingredients(ingredients))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
     
-    def get_params(self):
+    def get_params(self) -> dict:
         return self.__dict__
     
-    def get_data_tuple(self):
+    def get_data_tuple(self) -> tuple:
         return tuple(self.__dict__.values())
 
     @staticmethod
-    def get_columns():
+    def get_columns() -> list[str]:
         return [
             'Manjal Podi', 'Pachai Arisi(bag)', 'Pachai Arisi(Loose)',
             'Puzungal Arisi(Bag)', 'Puzungal Arisi(Loose)', 'Ulundhu', 'Nei',
@@ -57,7 +57,7 @@ class DonationRecord:
             except Exception as e:
                 pass
 
-    def update_record(self,new_ingredients:dict)->bool:
+    def update_record(self,new_ingredients:dict) -> bool:
         with sqlite3.connect("./data/madurai.db") as con:
             cur = con.cursor()
             set_clause = ", ".join([f"'{key}'={value}" for key, value in filter_ingredients(ingredients=new_ingredients).items()])
@@ -65,7 +65,15 @@ class DonationRecord:
             cur.execute(statement)
             con.commit()
             return True
+        
+    def delete_record(self) -> bool:
+        with sqlite3.connect("./data/madurai.db") as con:
+            cur = con.cursor()
+            statement = f"DELETE FROM donation_records WHERE id = {self.id};"
+            cur.execute(statement)
+            con.commit()
+            return True
 
 
-def filter_ingredients(ingredients):
+def filter_ingredients(ingredients) -> dict:
     return {key:value for key, value in ingredients.items() if key in DonationRecord.get_columns()}

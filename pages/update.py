@@ -61,6 +61,6 @@ with st.form("Update details", clear_on_submit=True):
             else:
                 st.error("Something went wrong")
         else:
-            st.warning("No changes Made")
+            st.warning("No Changes Made")
 
 
