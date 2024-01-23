@@ -28,7 +28,7 @@ with st.form("Add details", clear_on_submit=True):
     if st.form_submit_button("Add", use_container_width=True,type="primary"):
         data = ingrident_quantity.to_dict("split")["data"]
         data_dict = {key:value for key,value in data}
-        if (tuple(data_dict.keys())[0]) is not None or (name != ""):
+        if ((tuple(data_dict.keys())[0]) is not None) and (name != ""):
             obj = DonationRecord(
             data_dict, name, contact_number,book, place, date.strftime("%Y-%m-%d"))
             if obj.insert_record():
@@ -41,11 +41,11 @@ with st.form("Add details", clear_on_submit=True):
             st.error("Enter necessary details to insert/add...")
         
 col1, col2, col3 = st.columns(3)
-if col1.button("Home page", use_container_width=True):
+if col1.button("Home page", use_container_width=True, key="add_page_button-1"):
     st.switch_page("./app.py")
-elif col2.button("Update page", use_container_width=True):
+elif col2.button("Update page", use_container_width=True, key="add_page_button-2"):
     st.switch_page("pages/update.py")
-elif col3.button("Delete page", use_container_width=True):
+elif col3.button("Delete page", use_container_width=True, key="add_page_button-3"):
     st.switch_page("pages/delete.py")         
 
 

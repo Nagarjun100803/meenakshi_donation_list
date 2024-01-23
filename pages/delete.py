@@ -4,10 +4,11 @@ import streamlit as st
 import warnings
 warnings.filterwarnings("ignore")
 from pages.update import produce_non_zero_dict, render_df
+import time
 
 df = load_data().reset_index()
 col1, col2 = st.columns(2)
-id_ = col1.number_input(label="ID", min_value=1, max_value=300)
+id_ = col1.number_input(label="ID", min_value=1)
 res = df[df["id"] == id_]
 dict_ = produce_non_zero_dict(res)
 df = render_df(dict_)
@@ -19,15 +20,17 @@ if st.button("Delete", use_container_width=True, type="primary"):
     obj = DonationRecord({}, name, contact_number, book, place, date, id)
     if obj.delete_record():
         st.success(f"{name}'s record is deleted successfully..")
+        time.sleep(1)
+        st.switch_page("./app.py")
     else:
         st.error("Something went wrong..")
 
 col1, col2, col3 = st.columns(3)
-if col1.button("Home page", use_container_width=True):
+if col1.button("Home page", use_container_width=True, key="delete-1"):
     st.switch_page("./app.py")
-elif col2.button("Add page", use_container_width=True):
+elif col2.button("Add page", use_container_width=True, key="delete-2"):
     st.switch_page("pages/add.py")
-elif col3.button("Update page", use_container_width=True):
+elif col3.button("Update page", use_container_width=True, key="delete-3"):
     st.switch_page("pages/update.py") 
 
     

@@ -36,7 +36,7 @@ df = load_data().reset_index()
 st.header("Update Details 📝")
 st.markdown("##### Find a person with an ID to update</h3>", unsafe_allow_html=True)
 IdCol, NCol = st.columns(2)
-search_id = IdCol.number_input("ID", min_value=1, max_value=len(df.index))
+search_id = IdCol.number_input("ID", min_value=1)
 res = df[df["id"]==search_id]
 dict_ = produce_non_zero_dict(res)
 st.session_state["original"] = render_df(dict_)
@@ -64,11 +64,11 @@ with st.form("Update details", clear_on_submit=True):
             st.warning("No Changes Made")
 
 col1, col2, col3 = st.columns(3)
-if col1.button("Home page", use_container_width=True):
+if col1.button("Home page", use_container_width=True, key="update_page_button-1"):
     st.switch_page("./app.py")
-elif col2.button("Add page", use_container_width=True):
+elif col2.button("Add page", use_container_width=True, key="update_page_button-2"):
     st.switch_page("pages/add.py")
-elif col3.button("Delete page", use_container_width=True):
+elif col3.button("Delete page", use_container_width=True, key="update_page_button-3"):
     st.switch_page("pages/delete.py") 
 
 

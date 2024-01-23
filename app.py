@@ -12,6 +12,9 @@ def load_data() -> pd.DataFrame:
 
 
 def main():
+    st.set_page_config(
+        page_title="Meenakshi Thirukalyanam", initial_sidebar_state="collapsed", layout="centered"
+    )
     df = load_data()
     table = st.dataframe(data=df,width=600,use_container_width=True)
     col1, col2, col3 = st.columns(3)
@@ -21,10 +24,6 @@ def main():
         st.switch_page("pages/update.py")
     elif col3.button("Delete page", use_container_width=True, type="primary"):
         st.switch_page("pages/delete.py")
-
-    
-
-    
 
 
     
