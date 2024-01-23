@@ -25,7 +25,7 @@ with st.form("Add details", clear_on_submit=True):
                     "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns()),
                     "Quantity" : st.column_config.NumberColumn("Quant")
                 }, num_rows="dynamic", width=690)
-    if st.form_submit_button("Add", use_container_width=True):
+    if st.form_submit_button("Add", use_container_width=True,type="primary"):
         data = ingrident_quantity.to_dict("split")["data"]
         data_dict = {key:value for key,value in data}
         if (tuple(data_dict.keys())[0]) is not None or (name != ""):
@@ -40,7 +40,13 @@ with st.form("Add details", clear_on_submit=True):
         else:
             st.error("Enter necessary details to insert/add...")
         
-                 
+col1, col2, col3 = st.columns(3)
+if col1.button("Home page", use_container_width=True):
+    st.switch_page("./app.py")
+elif col2.button("Update page", use_container_width=True):
+    st.switch_page("pages/update.py")
+elif col3.button("Delete page", use_container_width=True):
+    st.switch_page("pages/delete.py")         
 
 
 
