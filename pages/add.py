@@ -36,7 +36,7 @@ with st.form("Add details", clear_on_submit=True):
                 time.sleep(1)
                 st.rerun()
             else:
-                st.warning("Something went wrong")
+                st.warning("Something went wrong. Please check you entered all the necesaary details")
         else:
             st.error("Enter necessary details to insert/add...")
         

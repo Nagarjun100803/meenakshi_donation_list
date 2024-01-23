@@ -76,4 +76,4 @@ class DonationRecord:
 
 
 def filter_ingredients(ingredients) -> dict:
-    return {key:value for key, value in ingredients.items() if key in DonationRecord.get_columns()}
+    return {key:value for key, value in ingredients.items() if key in DonationRecord.get_columns() and value is not None}
