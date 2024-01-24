@@ -4,7 +4,10 @@ import time
 from src.code import DonationRecord
 
 
-st.header("Add New Records")
+st.set_page_config(
+    page_title="add-record", initial_sidebar_state="collapsed", layout="centered"
+)
+st.markdown("### Add New Records🖊")
 dummy_df = {
 "Product" : [None],
 "Quantity" : [None]
@@ -23,12 +26,12 @@ with st.form("Add details", clear_on_submit=True):
     ingrident_quantity = st.data_editor(pd.DataFrame(dummy_df),
                 column_config={
                     "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns()),
-                    "Quantity" : st.column_config.NumberColumn("Quant")
+                    "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
                 }, num_rows="dynamic", width=690)
     if st.form_submit_button("Add", use_container_width=True,type="primary"):
-        data = ingrident_quantity.to_dict("split")["data"]
+        data = ingrident_quantity.to_dict("split")["data"] 
         data_dict = {key:value for key,value in data}
-        if ((tuple(data_dict.keys())[0]) is not None) and (name != ""):
+        if tuple(data_dict.keys())[0] is not None and (tuple(data_dict.values())[0]) is not None and name != "":
             obj = DonationRecord(
             data_dict, name, contact_number,book, place, date.strftime("%Y-%m-%d"))
             if obj.insert_record():

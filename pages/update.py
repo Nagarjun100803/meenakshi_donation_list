@@ -12,12 +12,16 @@ if "original" not in st.session_state:
 if "edited" not in st.session_state:
     st.session_state["edited"] = None
 
-def produce_non_zero_dict(df:pd.DataFrame)-> dict:
-    columns = df.to_dict("split")["columns"]
-    values = df.to_dict("split")["data"]
-    return {key:val for key, val in zip(columns, values[0]) if val!=0}
 
 def get_particular_record(id:int) -> pd.DataFrame:
+    """
+        This function query the database and return the
+        particular record as a DataFrame based on their ID... 
+
+        for eg, pd.DataFrame({"id":128, "name":"Arjun", "place":"", 
+        and some key value pair of ingedients ,"Nei":10, "Sugar":5, "Thu paruppu":0})
+    """
+
     df = load_data().reset_index()
     result = df[df["id"] == id]
     if result.empty:
@@ -25,7 +29,32 @@ def get_particular_record(id:int) -> pd.DataFrame:
         return False
     return result
 
-def render_df(data:dict)->dict:
+
+
+def get_non_zero_columns_asdict(df:pd.DataFrame)-> dict:
+    """
+        This function takes the particular record of person from the
+        "get_particular_record()" and will return only the columns 
+        which having non zero values as dictionary...
+    
+        for eg, {"id":128, "name":"Arjun", "place":"", "Nei":10, "Sugar":5} 
+    """
+    columns = df.to_dict("split")["columns"]
+    values = df.to_dict("split")["data"]
+    return {key:val for key, val in zip(columns, values[0]) if val!=0}
+
+
+
+def get_contribution_asframe(data:dict)->pd.DataFrame:
+    """
+        This function takes the non zero dictionary as an input from
+        "produce_non_zero_dict()" and return only the ingredients/contributions
+        provided by the particular record...
+
+        for eg, pd.DataFrame({"Product":["Nei", "Sugar"], "Quantity":[10, 5]})
+
+    """
+
     ignore_list = ["id", "name", "place", "contact_number", "date", "book"]
     report = {}
     product_list = []
@@ -40,24 +69,27 @@ def render_df(data:dict)->dict:
     return pd.DataFrame(report)
 
 
-df = load_data().reset_index()
-st.header("Update Details 📝")
+
+st.set_page_config(
+    page_title="update-record", initial_sidebar_state="collapsed", layout="centered"
+)
+st.markdown("### Update Details 📝")
 st.markdown("##### Find a person with an ID to update</h3>", unsafe_allow_html=True)
 IdCol, NCol = st.columns(2)
-search_id = IdCol.number_input("ID", min_value=1)
+search_id = IdCol.number_input("ID", min_value=1, key="update-search-id")
 particular_record = get_particular_record(search_id)
 
 
 if type(particular_record) == pd.DataFrame:
-    dict_ = produce_non_zero_dict(particular_record)
-    st.session_state["original"] = render_df(dict_)
-    id, name, contact_number, place, date, book =  dict_["id"], dict_['name'], dict_["contact_number"], dict_["place"], dict_["date"],dict_["book"]
+    non_zero_record = get_non_zero_columns_asdict(particular_record)
+    st.session_state["original"] = get_contribution_asframe(non_zero_record)
+    id, name, contact_number, place, date, book =  non_zero_record["id"], non_zero_record['name'], non_zero_record["contact_number"], non_zero_record["place"], non_zero_record["date"],non_zero_record["book"]
     search_name = NCol.text_input("Name", value=name, disabled=True, key="name-update")
     with st.form("Update details", clear_on_submit=True):
         st.session_state["edited"] = st.data_editor(st.session_state["original"],
                     column_config={
                         "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns()),
-                        "Quantity" : st.column_config.NumberColumn("Quant")
+                        "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
                     }, num_rows="dynamic", width=690)
         if st.form_submit_button("Update", use_container_width=True, type="primary"):
             if not st.session_state["original"].equals(st.session_state["edited"]):
