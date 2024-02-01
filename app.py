@@ -1,33 +1,35 @@
 import streamlit as st 
 import pandas as pd 
 import sqlite3
+from typing import Optional
+from src.utils import load_data, filter_df
 
-
-
-def load_data() -> pd.DataFrame:
-    """
-        These function query the database and return all records as a DataFrame
-        returns pd.DataFrame(all_records)
-    """
-    with sqlite3.connect("./data/madurai.db") as con :
-        statement = "SELECT * FROM donation_records;"
-        df = pd.read_sql_query(statement,con, index_col="id")
-        return df
 
 
 def main():
     st.set_page_config(
-        page_title="Meenakshi Thirukalyanam", initial_sidebar_state="collapsed", layout="centered"
+        page_title="Meenakshi Thirukalyanam", initial_sidebar_state="auto", layout="centered"
     )
     st.markdown("### Meenakshi Thirukalyanam Donars List")
+    col1, col2 = st.columns(2)
     df = load_data()
-    table = st.dataframe(data=df,width=600,use_container_width=True)
-    col1, col2, col3 = st.columns(3)
-    if col1.button("Add page", use_container_width=True, type="primary"):
+    selected_place = col1.selectbox("Place", df["place"].unique())
+    book_options = df["book"].unique().tolist()
+    book_options.insert(0,"")
+    selected_book = col2.selectbox("Book", book_options)
+    result = filter_df(df, selected_place, selected_book)
+    if result.empty:
+        st.error("No records found")
+    else:
+        st.dataframe(result, use_container_width=True)
+
+    # columns for buttons
+    col3, col4, col5 = st.columns(3)
+    if col3.button("Add page", use_container_width=True, type="primary"):
         st.switch_page("pages/add.py")
-    elif col2.button("Update page", use_container_width=True, type="primary"):
+    elif col4.button("Update page", use_container_width=True, type="primary"):
         st.switch_page("pages/update.py")
-    elif col3.button("Delete page", use_container_width=True, type="primary"):
+    elif col5.button("Delete page", use_container_width=True, type="primary"):
         st.switch_page("pages/delete.py")
 
 

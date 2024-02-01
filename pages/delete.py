@@ -1,10 +1,9 @@
-from src.code import DonationRecord
-from app import load_data
-import pandas as pd
 import streamlit as st 
+import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
-from pages.update import get_contribution, get_particular_record
+from src.code import DonationRecord
+from src.utils import get_contribution, get_particular_record
 import time
 
 

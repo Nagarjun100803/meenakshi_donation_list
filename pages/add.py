@@ -27,7 +27,7 @@ with st.form("Add details", clear_on_submit=True):
                 column_config={
                     "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns()),
                     "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
-                }, num_rows="dynamic", width=690)
+                }, num_rows="dynamic", use_container_width=True)
     if st.form_submit_button("Add", use_container_width=True,type="primary"):
         data = ingrident_quantity.to_dict("split")["data"] 
         data_dict = {key:value for key,value in data}

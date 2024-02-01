@@ -1,79 +1,21 @@
 import streamlit as st 
 import pandas as pd 
-from app import load_data
 import warnings 
 warnings.filterwarnings("ignore")
 from src.code import DonationRecord
+from src.utils import get_particular_record, get_contribution
 import time
 
 
+st.set_page_config(
+    page_title="update-record", initial_sidebar_state="collapsed", layout="centered"
+)
 if "original_contribution" not in st.session_state:
     st.session_state["original_contribution"] = None
 if "edited_contribution" not in st.session_state:
     st.session_state["edited_contribution"] = None
 
 
-def get_particular_record(id:int) -> pd.DataFrame:
-    """
-        This function query the database and return the
-        particular record as a DataFrame based on their ID... 
-
-        for eg, pd.DataFrame({"id":128, "name":"Arjun", "place":"", 
-        and some key value pair of ingedients ,"Nei":10, "Sugar":5, "Thu paruppu":0})
-        
-    """
-
-    df = load_data().reset_index()
-    result = df[df["id"] == id]
-    if result.empty:
-        st.error(f"No records for this ID : {id}, please try with diffrent ID")
-        return False
-    return result
-
-
-
-def get_contribution(particular_record:pd.DataFrame) -> tuple[dict, pd.DataFrame]:
-
-    """
-        These function takes particular_record(DataFrame) of a donar as an input
-        and returns the tuple of personal_record and ingedient contribution...
-
-        personal_record contains name, place etc and contribution contains
-        the details about what are the ingredients they give and how much quantity.
-
-        return tuple(dict, pd.DataFrame)
-        for eg, peronsal_record = {"id":128, "name":"Arjun", "place":"", "contact_number":"",
-                                    "date":"2024/01/04", "book":"B4"}
-                contribution = pd.DataFrame({
-                "Product":["Sugar", "Manjal Podi"], "Quantity":[10,5]
-                })
-    """
-
-
-    columns = particular_record.to_dict("split")["columns"]
-    values  = particular_record.to_dict("split")["data"]
-    # we take all non zero records
-    non_zero_values = {key:value for key, value in zip(columns, values[0]) if value != 0}
-    personal_info_cols = ["id", "name", "place", "contact_number", "date", "book"]
-    personal_record = {}
-    contribution = {}
-    product_list = []
-    quantity_list = []
-    for key, val in non_zero_values.items():
-        if key not in personal_info_cols:
-            product_list.append(key)
-            quantity_list.append(val)
-        personal_record[key] = val 
-    contribution["Product"] = product_list
-    contribution["Quantity"] = quantity_list
-
-    return personal_record, pd.DataFrame(contribution)
-    
-
-
-st.set_page_config(
-    page_title="update-record", initial_sidebar_state="collapsed", layout="centered"
-)
 st.markdown("### Update Details 📝")
 st.markdown("##### Find a person with an ID to update</h3>", unsafe_allow_html=True)
 IdCol, NCol = st.columns(2)
@@ -90,7 +32,7 @@ if type(particular_record) == pd.DataFrame:
                     column_config={
                         "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns()),
                         "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
-                    }, num_rows="dynamic", width=690)
+                    }, num_rows="dynamic", use_container_width=True)
         if st.form_submit_button("Update", use_container_width=True, type="primary"):
             if not st.session_state["original_contribution"].equals(st.session_state["edited_contribution"]):
                 data = st.session_state["edited_contribution"].to_dict("split")["data"]
