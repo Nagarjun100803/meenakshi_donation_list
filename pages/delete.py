@@ -10,7 +10,7 @@ import time
 st.set_page_config(
     page_title="delete-record", initial_sidebar_state="collapsed", layout="centered"
 )
-st.markdown("### Delert Record💢")
+st.markdown("### Delete Record💢")
 st.markdown("##### Find a person with an ID to delete</h3>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)

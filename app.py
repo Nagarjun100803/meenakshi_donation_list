@@ -1,7 +1,4 @@
 import streamlit as st 
-import pandas as pd 
-import sqlite3
-from typing import Optional
 from src.utils import load_data, filter_df
 
 

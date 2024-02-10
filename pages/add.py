@@ -8,10 +8,6 @@ st.set_page_config(
     page_title="add-record", initial_sidebar_state="collapsed", layout="centered"
 )
 st.markdown("### Add New Records🖊")
-dummy_df = {
-"Product" : [None],
-"Quantity" : [None]
-}
 
 with st.form("Add details", clear_on_submit=True):
     col1, col2 = st.columns([2,1])
@@ -23,7 +19,7 @@ with st.form("Add details", clear_on_submit=True):
     date = col3.date_input("Date")
     book = col4.selectbox("Book", ["B1", "B2", "B3", "B4", "B5", "B6", "B7"])
     contact_number = col5.text_input("Contact Number")
-    ingrident_quantity = st.data_editor(pd.DataFrame(dummy_df),
+    ingrident_quantity = st.data_editor(pd.DataFrame(columns=["Product", "Quantity"]),
                 column_config={
                     "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns()),
                     "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)

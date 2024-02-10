@@ -86,10 +86,7 @@ def get_contribution(particular_record:pd.DataFrame) -> tuple[dict, pd.DataFrame
     # we take all non zero records
     non_zero_values = {key:value for key, value in zip(columns, values[0]) if value != 0}
     personal_info_cols = ["id", "name", "place", "contact_number", "date", "book"]
-    personal_record = {}
-    contribution = {}
-    product_list = []
-    quantity_list = []
+    personal_record, contribution, product_list, quantity_list = {}, {}, [], []
     for key, val in non_zero_values.items():
         if key not in personal_info_cols:
             product_list.append(key)
