@@ -1,14 +1,17 @@
 import sqlite3
 import pandas as pd 
-from typing import Optional, Union
+from typing import Optional, Union, Tuple, Dict
 import streamlit as st
+import os 
 
 def load_data() -> pd.DataFrame:
     """
         These function query the database and return all records as a DataFrame
         returns pd.DataFrame(all_records)...
     """
-    with sqlite3.connect("./data/madurai.db") as con :
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_path = os.path.join(root_dir, "data", "madurai.db")
+    with sqlite3.connect(database=db_path) as con :
         statement = "SELECT * FROM donation_records;"
         df = pd.read_sql_query(statement,con, index_col="id")
         return df
@@ -63,7 +66,7 @@ def get_particular_record(id:int) -> Union[pd.DataFrame, bool]:
 
 
 
-def get_contribution(particular_record:pd.DataFrame) -> tuple[dict, pd.DataFrame]:
+def get_contribution(particular_record:pd.DataFrame) -> Tuple[Dict[str, str], pd.DataFrame]:
 
     """
         These function takes particular_record(DataFrame) of a donar as an input
