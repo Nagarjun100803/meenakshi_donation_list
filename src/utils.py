@@ -1,6 +1,6 @@
 import sqlite3
 import pandas as pd 
-from typing import Optional
+from typing import Optional, Union
 import streamlit as st
 
 def load_data() -> pd.DataFrame:
@@ -40,7 +40,7 @@ def filter_df(df:pd.DataFrame, selected_place:Optional[str]="", selected_book:Op
     
 
 
-def get_particular_record(id:int) -> pd.DataFrame | bool:
+def get_particular_record(id:int) -> Union[pd.DataFrame, bool]:
     """
         This function query the database and return the
         particular record as a DataFrame based on their ID...
