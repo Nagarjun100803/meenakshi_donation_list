@@ -45,7 +45,7 @@ class DonationRecord:
           ]
     
     def insert_record(self) -> bool:
-        with sqlite3.connect("./data/madurai.db") as con:
+        with sqlite3.connect("./db/madurai.db") as con:
             try :
                 cur = con.cursor()
                 columns = tuple(self.get_params().keys())[1:-1] + tuple(self.get_params()["ingredients"].keys())
@@ -58,7 +58,7 @@ class DonationRecord:
                 pass
 
     def update_record(self,new_ingredients:dict) -> bool:
-        with sqlite3.connect("./data/madurai.db") as con:
+        with sqlite3.connect("./db/madurai.db") as con:
             cur = con.cursor()
             set_clause = ", ".join([f"'{key}'={value}" for key, value in filter_ingredients(ingredients=new_ingredients).items()])
             statement = f"UPDATE donation_records SET {set_clause} WHERE id={self.id};"
@@ -67,7 +67,7 @@ class DonationRecord:
             return True
         
     def delete_record(self) -> bool:
-        with sqlite3.connect("./data/madurai.db") as con:
+        with sqlite3.connect("./db/madurai.db") as con:
             cur = con.cursor()
             statement = f"DELETE FROM donation_records WHERE id = {self.id};"
             cur.execute(statement)

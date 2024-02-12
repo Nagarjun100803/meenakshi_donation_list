@@ -10,7 +10,7 @@ def load_data() -> pd.DataFrame:
         returns pd.DataFrame(all_records)...
     """
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    db_path = os.path.join(root_dir, "data", "madurai.db")
+    db_path = os.path.join(root_dir, "db", "madurai.db")
     with sqlite3.connect(database=db_path) as con :
         statement = "SELECT * FROM donation_records;"
         df = pd.read_sql_query(statement,con, index_col="id")
