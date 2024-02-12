@@ -25,24 +25,15 @@ with st.form("Add details"):
                     "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
                 }, num_rows="dynamic", use_container_width=True)
     if st.form_submit_button("Add", use_container_width=True,type="primary"):
-<<<<<<< HEAD
         if (not ingrident_quantity.empty) and (not name.strip() == ""):
-=======
-        if (not ingrident_quantity.empty) and (name != ""):
->>>>>>> f8e008e9bfd6ffee84b092df717b3afc3d565b8c
             data = ingrident_quantity.to_dict("split")["data"] 
             data_dict = {key:value for key,value in data}
             obj = DonationRecord(
             data_dict, name, contact_number,book, place, date.strftime("%Y-%m-%d"))
             if obj.insert_record():
                 st.success(f"{obj.name}'s record inserted sucessfully")
-<<<<<<< HEAD
                 time.sleep(1.5)
                 st.switch_page("./app.py")
-=======
-                time.sleep(0.5)
-                st.rerun()
->>>>>>> f8e008e9bfd6ffee84b092df717b3afc3d565b8c
             else:
                 st.warning("Something went wrong. Please check you entered all the necesaary details")
         else:
