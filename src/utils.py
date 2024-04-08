@@ -60,7 +60,7 @@ def get_particular_record(id:int) -> Union[pd.DataFrame, bool]:
     result = df[df["id"] == id]
     if result.empty:
         st.error(f"No records for this ID : {id}, please try with diffrent ID")
-        return False
+        st.stop()
     return result
 
 

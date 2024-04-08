@@ -16,22 +16,22 @@ st.markdown("##### Find a person with an ID to delete</h3>", unsafe_allow_html=T
 col1, col2 = st.columns(2)
 search_id = col1.number_input(label="ID", min_value=1,key="delete-search-id")
 
-
 particular_record = get_particular_record(search_id)
-if type(particular_record) == pd.DataFrame:
-    personal_record, contribution = get_contribution(particular_record)
-    id, name, contact_number, place, date, book =  personal_record["id"], personal_record['name'], personal_record["contact_number"], personal_record["place"], personal_record["date"],personal_record["book"]
-    actual_name = col2.text_input("Name", value=name, disabled=True, key="name-delete")
-    st.markdown("#### Donar Contribution")
-    st.dataframe(contribution, use_container_width=True)
-    if st.button("Delete", use_container_width=True, type="primary"):
-        obj = DonationRecord({}, name, contact_number, book, place, date, id)
-        if obj.delete_record():
-            st.success(f"{name}'s record is deleted successfully..")
-            time.sleep(1)
-            st.switch_page("./app.py")
-        else:
-            st.error("Something went wrong..")
+# if type(particular_record) == pd.DataFrame:
+personal_record, contribution = get_contribution(particular_record)
+id, name, contact_number, place, date, book =  personal_record["id"], personal_record['name'], personal_record["contact_number"], personal_record["place"], personal_record["date"],personal_record["book"]
+actual_name = col2.text_input("Name", value=name, disabled=True, key="name-delete")
+st.markdown("#### Donar Contribution")
+contribution.set_index("Product", inplace=True)
+st.dataframe(contribution, use_container_width=True)
+if st.button("Delete", use_container_width=True, type="primary"):
+    obj = DonationRecord({}, name, contact_number, book, place, date, id)
+    if obj.delete_record():
+        st.success(f"{name}'s record is deleted successfully..")
+        time.sleep(1)
+        st.switch_page("./app.py")
+    else:
+        st.error("Something went wrong..")
 
 col1, col2, col3 = st.columns(3)
 if col1.button("Home page", use_container_width=True, key="delete-1"):

@@ -1,5 +1,6 @@
 import sqlite3
 from typing import Optional
+import pandas as pd
 
 
 class DonationRecord:
@@ -11,7 +12,7 @@ class DonationRecord:
         self.place = place
         self.date = date 
         self.ingredients = {key: 0 for key in DonationRecord.get_columns()}
-        self.ingredients.update(filter_ingredients(ingredients))
+        self.ingredients.update(ingredients)
 
     def __str__(self) -> str:
         return self.name
@@ -24,25 +25,31 @@ class DonationRecord:
 
     @staticmethod
     def get_columns() -> list[str]:
-        return [
-            'Manjal Podi', 'Pachai Arisi(bag)', 'Pachai Arisi(Loose)',
-            'Puzungal Arisi(Bag)', 'Puzungal Arisi(Loose)', 'Ulundhu', 'Nei',
-            'Sugar', 'Arisi maavu', 'Thu Parupu', 'Pa parupu', 'Annasi Poo',
-            'Ginger', 'Rock Salt', 'Table Salt', 'Elachi', 'Groundnut Oil',
-            'Ka parupu', 'Kadala Mavu', 'Kadugu', 'Garam Masala', 'Krambu',
-            'seeragam', 'Sombu', 'Grapes', 'Gingerly oil', 'Pattai', 'Brinji Ilai',
-            'Perungayam', 'Puli', 'Malli', 'Malli powder', 'Milagai Vathal',
-            'Milagai Powder', 'Milagu', 'Milagu Thul', 'Cashew', 'Rava',
-            'Refined oil', 'Vendhayam', 'Vellam', 'Garlic', 'Kal Pasi', 'Pumpkin',
-            'Sambar Powder', 'Potato', 'katti peruganyam', 'Mango Pack', 'Nuts',
-            'Giragam', 'Kalkandu', 'Mumthal', 'Tea Powder', 'Coconut', 'Appalam',
-            'Lk Glass', 'Silvar Glass', 'Sabeena Powder', 'Rava.1', 'Kungumam',
-            'Kismis', 'Fortune Oil', 'Sengal(Bricks)', 'Mango(Mangai)', 'Javaraci',
-            'Hp Gas', 'Curd', 'Vetttrillai', 'Pakku', 'Butter', 'Valiaikai',
-            'Samiya', 'Gold Winner', 'Dates', 'Ballari', 'Manjal Kayiru',
-            'Kungumam pack', 'Catds', 'Kungumam cover', 'Plastic Cup', 'Sponge',
-            'Coffee powder', 'Gas cylinder', 'palasaraku porul', 'Pam poil'
-          ]
+        # return [
+        #     'Manjal Podi', 'Pachai Arisi(bag)', 'Pachai Arisi(Loose)',
+        #     'Puzungal Arisi(Bag)', 'Puzungal Arisi(Loose)', 'Ulundhu', 'Nei',
+        #     'Sugar', 'Arisi maavu', 'Thu Parupu', 'Pa parupu', 'Annasi Poo',
+        #     'Ginger', 'Rock Salt', 'Table Salt', 'Elachi', 'Groundnut Oil',
+        #     'Ka parupu', 'Kadala Mavu', 'Kadugu', 'Garam Masala', 'Krambu',
+        #     'seeragam', 'Sombu', 'Grapes', 'Gingerly oil', 'Pattai', 'Brinji Ilai',
+        #     'Perungayam', 'Puli', 'Malli', 'Malli powder', 'Milagai Vathal',
+        #     'Milagai Powder', 'Milagu', 'Milagu Thul', 'Cashew', 'Rava',
+        #     'Refined oil', 'Vendhayam', 'Vellam', 'Garlic', 'Kal Pasi', 'Pumpkin',
+        #     'Sambar Powder', 'Potato', 'katti peruganyam', 'Mango Pack', 'Nuts',
+        #     'Giragam', 'Kalkandu', 'Mumthal', 'Tea Powder', 'Coconut', 'Appalam',
+        #     'Lk Glass', 'Silvar Glass', 'Sabeena Powder', 'Rava.1', 'Kungumam',
+        #     'Kismis', 'Fortune Oil', 'Sengal(Bricks)', 'Mango(Mangai)', 'Javaraci',
+        #     'Hp Gas', 'Curd', 'Vetttrillai', 'Pakku', 'Butter', 'Valiaikai',
+        #     'Samiya', 'Gold Winner', 'Dates', 'Ballari', 'Manjal Kayiru',
+        #     'Kungumam pack', 'Catds', 'Kungumam cover', 'Plastic Cup', 'Sponge',
+        #     'Coffee powder', 'Gas cylinder', 'palasaraku porul', 'Pam poil'
+        #   ]
+        with sqlite3.connect("./db/madurai.db") as con:
+            table = pd.read_sql("SELECT * FROM donation_records;", con)
+            cols = [col for col in table.columns if table[col].dtype != "O"]
+            return cols[1:]
+
+
     
     def insert_record(self) -> bool:
         with sqlite3.connect("./db/madurai.db") as con:
@@ -56,7 +63,7 @@ class DonationRecord:
                 return True
             except Exception as e:
                 pass
-
+        
     def update_record(self,new_ingredients:dict) -> bool:
         with sqlite3.connect("./db/madurai.db") as con:
             cur = con.cursor()
@@ -77,3 +84,9 @@ class DonationRecord:
 
 def filter_ingredients(ingredients) -> dict:
     return {key:value for key, value in ingredients.items() if key in DonationRecord.get_columns() and value is not None}
+
+
+# obj = DonationRecord(ingredients={}, name="nagarjun", contact_number="22j3", book="2j3",
+#                      place="1m3", date="d32")
+# # print(tuple(obj.get_params().keys())[1:-1])
+# # print(tuple(obj.get_params()["ingredients"].keys()))
