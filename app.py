@@ -10,9 +10,11 @@ def main():
     st.markdown("### Meenakshi Thirukalyanam Donars List")
     col1, col2 = st.columns(2)
     df = load_data().replace(to_replace={0 : ""})
-    selected_place = col1.selectbox("Place", df["place"].unique())
-    book_options = df["book"].unique().tolist()
-    book_options.insert(0,"")
+    places = df["place"].unique().tolist()
+    place_option = [""] + places 
+    selected_place = col1.selectbox("Place", place_option)
+    books = df["book"].unique().tolist()
+    book_options = [""] + books
     selected_book = col2.selectbox("Book", book_options)
     result = filter_df(df, selected_place, selected_book)
     if result.empty:
