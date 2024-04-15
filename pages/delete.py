@@ -14,7 +14,7 @@ st.markdown("### Delete Record💢")
 st.markdown("##### Find a person with an ID to delete</h3>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
-search_id = col1.number_input(label="ID", min_value=1,key="delete-search-id")
+search_id = col1.text_input(label="Serial Number",key="delete-search-id")
 
 particular_record = get_particular_record(search_id)
 # if type(particular_record) == pd.DataFrame:
@@ -23,15 +23,16 @@ id, name, contact_number, place, date, book, book_serial_num =  personal_record[
 actual_name = col2.text_input("Name", value=name, disabled=True, key="name-delete")
 st.markdown("#### Donar Contribution")
 contribution.set_index("Product", inplace=True)
-st.dataframe(contribution, use_container_width=True)
-if st.button("Delete", use_container_width=True, type="primary"):
-    obj = DonationRecord({}, name, contact_number, book, place, date, book_serial_num, id,)
-    if obj.delete_record():
-        st.success(f"{name}'s record is deleted successfully..")
-        time.sleep(1)
-        st.switch_page("./app.py")
-    else:
-        st.error("Something went wrong..")
+with st.form("Delete-form"):
+    st.dataframe(contribution, use_container_width=True)
+    if st.form_submit_button("Delete", use_container_width=True, type="primary"):
+        obj = DonationRecord({}, name, contact_number, book, place, date, book_serial_num, id,)
+        if obj.delete_record():
+            st.success(f"{name}'s record is deleted successfully..")
+            time.sleep(1)
+            st.switch_page("./app.py")
+        else:
+            st.error("Something went wrong..")
 
 col1, col2, col3 = st.columns(3)
 if col1.button("Home page", use_container_width=True, key="delete-1"):

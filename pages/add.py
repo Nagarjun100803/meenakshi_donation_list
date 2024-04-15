@@ -34,14 +34,15 @@ with st.form("Add details"):
                 column_config={
                     "Product" : st.column_config.SelectboxColumn("Product", options=DonationRecord.get_columns(), required=True),
                     "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
-                    # "Unit" : st.column_config.SelectboxColumn("Unit", default= "Kg",options=["Kg", "Lr", "Pcs"])
+                    # "Unit" : st.column_config.SelectboxColumn("Unit", default= "Kg",options=["Kg", "L", "Pcs"])
                 }, num_rows="dynamic", use_container_width=True)
     st.markdown("<h6 style='text-align:center;'>Product that we dont have in our database</h6>", unsafe_allow_html=True)
     new_product = st.data_editor(
         pd.DataFrame(columns=["Product", "Quantity"]),
         column_config={
-            "Product" : st.column_config.TextColumn("Name", required=True, max_chars=30),
-            "Quantity" : st.column_config.NumberColumn("Quant", default=0, min_value=0)
+            "Product" : st.column_config.TextColumn("Product", required=True, max_chars=30),
+            "Quantity" : st.column_config.NumberColumn("Quantity", default=0, min_value=0)
+            # "Unit" : st.column_config.SelectboxColumn("Unit",default= "Kg",options=["Kg", "L", "Pcs"])
         },
         num_rows="dynamic", use_container_width=True
     )

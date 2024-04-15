@@ -57,7 +57,7 @@ def get_particular_record(id:int) -> Union[pd.DataFrame, bool]:
     """
 
     df = load_data().reset_index()
-    result = df[df["id"] == id]
+    result = df[df["book_serial_num"] == id]
     if result.empty:
         st.error(f"No records for this ID : {id}, please try with diffrent ID")
         st.stop()

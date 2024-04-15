@@ -19,7 +19,7 @@ if "edited_contribution" not in st.session_state:
 st.markdown("### Update Details 📝")
 st.markdown("##### Find a person with an ID to update</h3>", unsafe_allow_html=True)
 IdCol, NCol = st.columns(2)
-search_id = IdCol.number_input("ID", min_value=1, key="update-search-id")
+search_id = IdCol.text_input("Serial Number", key="update-search-id")
 particular_record = get_particular_record(search_id)
 
 
