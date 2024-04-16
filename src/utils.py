@@ -55,13 +55,14 @@ def get_particular_record(id:int) -> Union[pd.DataFrame, bool]:
         and some key value pair of ingedients ,"Nei":10, "Sugar":5, "Thu paruppu":0})
 
     """
-
-    df = load_data().reset_index()
-    result = df[df["book_serial_num"] == id]
-    if result.empty:
-        st.error(f"No records for this ID : {id}, please try with diffrent ID")
-        st.stop()
-    return result
+    if id.strip() != "" : 
+        df = load_data().reset_index()
+        result = df[df["book_serial_num"] == id]
+        if result.empty:
+            st.error(f"No records found with : {id},try with diffrent BOOk SERIAL NUMBER")
+            return None
+        return result
+    st.warning("Please Enter Book Serial Number")
 
 
 

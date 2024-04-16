@@ -40,6 +40,8 @@ class DonationRecord:
                 values = tuple(self.get_params().values())[1:-1] + tuple(self.get_params()["ingredients"].values())
                 statement = f"INSERT INTO donation_records {columns} VALUES {values};"
                 cur.execute(statement)
+                # statement = f"INSERT INTO donation_records_nt {columns} VALUES {values};"
+                # cur.execute(statement)
                 con.commit()
                 return True
             except Exception as e:
@@ -52,6 +54,8 @@ class DonationRecord:
             set_clause = ", ".join([f"'{key}'={value}" for key, value in filter_ingredients(ingredients=new_ingredients).items()])
             statement = f"UPDATE donation_records SET {set_clause} WHERE id={self.id};"
             cur.execute(statement)
+            # statement = f"UPDATE donation_records_nt SET {set_clause} WHERE id={self.id};"
+            # cur.execute(statement)
             con.commit()
             return True
         
@@ -60,6 +64,8 @@ class DonationRecord:
             cur = con.cursor()
             statement = f"DELETE FROM donation_records WHERE id = {self.id};"
             cur.execute(statement)
+            # statement = f"DELETE FROM donation_records_nt WHERE id = {self.id};"
+            # cur.execute(statement)
             con.commit()
             return True
 
