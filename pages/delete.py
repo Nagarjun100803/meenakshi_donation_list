@@ -10,9 +10,10 @@ import time
 st.set_page_config(
     page_title="delete-record", initial_sidebar_state="collapsed", layout="centered"
 )
+st.sidebar.image("thirukalyanam.jpg")
 
 st.markdown("<h3 style = 'text-align:center;'> Delete particular contribution.</h3>", unsafe_allow_html=True)
-st.markdown("<h5 style = 'text-align:center;'> Find a contribution by book seriak number</h5>", unsafe_allow_html=True)
+st.markdown("<h5 style = 'text-align:center;'> Find a contribution by book serial number</h5>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 search_id = col1.text_input(label="Serial Number",key="delete-search-id")

@@ -10,6 +10,7 @@ import time
 st.set_page_config(
     page_title="update-record", initial_sidebar_state="collapsed", layout="centered"
 )
+st.sidebar.image("thirukalyanam.jpg")
 
 
 if "original_contribution" not in st.session_state:
@@ -19,7 +20,7 @@ if "edited_contribution" not in st.session_state:
 
 
 st.markdown("<h3 style = 'text-align:center;'> Update particular contribution.</h3>", unsafe_allow_html=True)
-st.markdown("<h5 style = 'text-align:center;'> Find a contribution by book seriak number</h5>", unsafe_allow_html=True)
+st.markdown("<h5 style = 'text-align:center;'> Find a contribution by book serial number</h5>", unsafe_allow_html=True)
 
 
 IdCol, NCol = st.columns(2)

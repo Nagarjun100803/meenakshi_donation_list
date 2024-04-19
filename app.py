@@ -11,8 +11,9 @@ def main():
     )
 
     st.markdown("### Meenakshi Thirukalyanam Donars List")
-
     col1, col2 = st.columns(2)
+
+    st.sidebar.image("thirukalyanam.jpg")
 
     df = load_data().set_index("book_serial_num").replace(to_replace={0 : ""})
 

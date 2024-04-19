@@ -3,31 +3,41 @@ import pandas as pd
 import time
 from src.code import DonationRecord
 import sqlite3
+from src.utils import load_data, update_iventory_table
 
-def check_new_column(list_of_column : list) -> list:
-    new_column = [col for col in list_of_column if col not in DonationRecord.get_columns()]
+def check_new_column(new_col_list : list) -> list:
+
+    new_column = [col for col in new_col_list if col not in DonationRecord.get_columns()]
+    
     return new_column
 
 
 
-def create_columns(list_of_column : list) -> list:
+def create_columns(new_col_list : list) -> list:
     with sqlite3.connect("./db/madurai.db") as con:
         cur = con.cursor()
-        for col in list_of_column:
+        for col in new_col_list:
             sql = f"""ALTER TABLE donation_records ADD '{col}' INTEGER DEFAULT 0;"""
             cur.execute(sql)
             # sql = f"""ALTER TABLE donation_records_nt ADD '{col}' INTEGER DEFAULT 0;"""
             # cur.execute(sql)
-            sql = f"""INSERT INTO products (product) values ('{col}');"""
+            sql = f"""INSERT INTO inventory (product, Quantity) values ('{col}', 0);"""
             cur.execute(sql)
         con.commit()  
 
 
 
+def is_exist(book_serial_num : str) -> bool :
+
+    book_serial_nums = load_data()["book_serial_num"].unique()
+
+    return  book_serial_num in book_serial_nums 
+
 
 st.set_page_config(
     page_title="add-record", initial_sidebar_state="collapsed", layout="centered"
 )
+st.sidebar.image("thirukalyanam.jpg")
 st.markdown("### Add New Contribution")
 
 with st.form("Add details"):
@@ -75,55 +85,12 @@ with st.form("Add details"):
         use_container_width=True
     )
     # remarks = st.text_input("Remarks")
+    button =  st.form_submit_button("Add", use_container_width=True,type="primary")
 
-
-    if st.form_submit_button("Add", use_container_width=True,type="primary"):
-
-        all_dict = {}
-
-        if (not ingrident_quantity.empty):
-
-            ing_data = ingrident_quantity.to_dict("split")["data"] 
-            ing_data_dict = {key:value for key,value in ing_data}
-            all_dict.update(ing_data_dict)
-
-
-        if (not new_product.empty):
-
-            new_data = new_product.to_dict("split")["data"]
-            new_data_dict = {key:val for key, val in new_data}
-            all_dict.update(new_data_dict)  
-
-
-        if not(all([name.strip(), place, book_serial_num, contact_number]) and (not ingrident_quantity.empty or not new_product.empty)):
-
-            st.error("All Field are Required")
-            st.stop()
-
-        else: 
-
-            new_cols = check_new_column(all_dict)
-            if len(new_cols) != 0:
-                create_columns(new_cols)
-            
-            else:
-                pass
-            
-            obj = DonationRecord(
-            all_dict, name, contact_number,book, place, date.strftime("%Y-%m-%d"), book_serial_num)
-            try:
-                
-                if obj.insert_record():
-                    st.success(f"{obj.name}'s record inserted sucessfully")
-                    time.sleep(1)
-                    st.switch_page("./app.py")
-
-
-            except Exception as e:
-                st.error((str(e)))     
-            
+placeholder = st.empty()
 
 col1, col2, col3 = st.columns(3)
+
 if col1.button("Home page", use_container_width=True, key="add_page_button-1", type="primary"):
     st.switch_page("./app.py")
     
@@ -132,5 +99,58 @@ elif col2.button("Update page", use_container_width=True, key="add_page_button-2
     
 elif col3.button("Delete page", use_container_width=True, key="add_page_button-3", type="primary"):
     st.switch_page("pages/delete.py") 
+
+if button :
+    
+    if is_exist(book_serial_num):
+        placeholder.error("BOOK SERIAL NUMBER ALREADY EXISTS")
+        st.stop()
+
+    all_dict = {}
+
+    if (not ingrident_quantity.empty):
+
+        ing_data = ingrident_quantity.to_dict("split")["data"] 
+        ing_data_dict = {key:value for key,value in ing_data}
+        all_dict.update(ing_data_dict)
+
+
+    if (not new_product.empty):
+
+        new_data = new_product.to_dict("split")["data"]
+        new_data_dict = {key:val for key, val in new_data}
+        all_dict.update(new_data_dict)  
+
+
+    if not(all([name.strip(), place, book_serial_num, contact_number]) and (not ingrident_quantity.empty or not new_product.empty)):
+
+        placeholder.error("All FIELDS ARE REQUIRED")
+        st.stop()
+
+    else: 
+
+        new_cols = check_new_column(all_dict)
+        if len(new_cols) != 0:
+            create_columns(new_cols)
+        
+        else:
+            pass
+        
+        obj = DonationRecord(
+        all_dict, name, contact_number,book, place, date.strftime("%Y-%m-%d"), book_serial_num)
+        try:
+            
+            if obj.insert_record():
+                update_iventory_table(all_dict,update_type="add")
+                placeholder.success(f"{obj.name}'s record inserted sucessfully")
+                time.sleep(1)
+                st.switch_page("./app.py")
+
+
+        except Exception as e:
+            st.error((str(e)))     
+        
+
+
             
 

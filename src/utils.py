@@ -1,6 +1,6 @@
 import sqlite3
 import pandas as pd 
-from typing import Optional, Union, Tuple, Dict
+from typing import Optional, Union, Tuple, Dict, Literal
 import streamlit as st
 import os 
 
@@ -67,7 +67,7 @@ def get_particular_record(id:int) -> Union[pd.DataFrame, bool]:
 
 
 
-def get_contribution(particular_record:pd.DataFrame) -> Tuple[Dict[str, str], pd.DataFrame]:
+def get_contribution(particular_record:pd.DataFrame, how : Literal["allocation", "contribution"] = "contribution") -> Tuple[Dict[str, str], pd.DataFrame]: 
 
     """
         These function takes particular_record(DataFrame) of a donar as an input
@@ -89,15 +89,66 @@ def get_contribution(particular_record:pd.DataFrame) -> Tuple[Dict[str, str], pd
     values  = particular_record.to_dict("split")["data"]
     # we take all non zero records
     non_zero_values = {key:value for key, value in zip(columns, values[0]) if value != 0}
-    personal_info_cols = ["id", "name", "place", "contact_number", "date", "book", "book_serial_num"]
+    personal_info_cols = ["id", "name", "place", "contact_number", "date", "book", "book_serial_num"] if how == "contribution" else ['allocation_id', 'team_name', 'team_supervisor','team_supervisor_contact_number', 'date', 'dish']
     personal_record, contribution, product_list, quantity_list = {}, {}, [], []
+    
     for key, val in non_zero_values.items():
+        
         if key not in personal_info_cols:
             product_list.append(key)
             quantity_list.append(val)
-        personal_record[key] = val 
+        
+        else :
+            personal_record[key] = val 
+
     contribution["Product"] = product_list
     contribution["Quantity"] = quantity_list
 
     return personal_record, pd.DataFrame(contribution)
     
+
+def is_exist(book_serial_num : str) -> bool :
+
+    book_serial_nums = load_data()["book_serial_num"].unique()
+    
+    return  book_serial_num in book_serial_nums 
+
+
+def update_iventory_table(contribution : dict, update_type : Literal["add", "sub"] = "add") -> None:
+
+    operator = "+" if update_type == "add" else "-"
+
+    with sqlite3.connect("./db/madurai.db") as con :
+        cur = con.cursor()
+
+        for product, quantity in contribution.items():
+
+            sql = f"UPDATE inventory SET Quantity = (SELECT Quantity FROM inventory WHERE product = '{product}') {operator} {quantity} WHERE product = '{product}';"
+            cur.execute(sql)
+        
+        con.commit()
+
+def get_inventory() -> pd.DataFrame:
+
+    with sqlite3.connect("./db/madurai.db") as con :
+
+        inventory_df =  pd.read_sql("SELECT * FROM inventory;", con)
+        inventory_df.index += 1
+        
+        return inventory_df
+    
+
+def check_all_products_exists(allocation_req_dict : dict):
+
+    inventory_df = get_inventory()
+
+    for product, quantity in allocation_req_dict.items():
+
+        existed_product_detail = (inventory_df[inventory_df["product"] == product]).values[0]
+        _, existed_quantity, unit = existed_product_detail
+
+        if existed_quantity >= quantity :
+            pass
+        
+        else:
+            raise Exception(f'Availability for the {product} is {existed_quantity}{unit}, but you entered : {quantity}{unit}')
