@@ -144,7 +144,7 @@ if button :
                 update_iventory_table(all_dict,update_type="add")
                 placeholder.success(f"{obj.name}'s record inserted sucessfully")
                 time.sleep(0.5)
-                st.switch_page("app.py")
+                st.rerun()
                 
 
 
