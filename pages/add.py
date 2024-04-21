@@ -21,8 +21,8 @@ def create_columns(new_col_list : list) -> list:
             cur.execute(sql)
             # sql = f"""ALTER TABLE donation_records_nt ADD '{col}' INTEGER DEFAULT 0;"""
             # cur.execute(sql)
-            sql = f"""INSERT INTO inventory (product, Quantity) values ('{col}', 0);"""
-            cur.execute(sql)
+            # sql = f"""INSERT INTO inventory (product, Quantity) values ('{col}', 0);"""
+            # cur.execute(sql)
         con.commit()  
 
 
@@ -44,7 +44,7 @@ with st.form("Add details"):
 
     col1, col2, col3 = st.columns(3)
     name = col1.text_input("Donar Name")
-    book = col2.selectbox("Book", ["B1", "B2", "B3", "B4", "B5", "B6", "B7"])
+    book = col2.selectbox("Book", ["B24", "B25", "B26", "B21","B22", "B23"])
     book_serial_num = col3.text_input("Book Serial Number")
     place = col1.text_input("Place", value="Madurai")
     date = col2.date_input("Date")
@@ -73,8 +73,8 @@ with st.form("Add details"):
         pd.DataFrame(columns=["Product", "Quantity"]),
         column_config={
             "Product" : st.column_config.TextColumn(
-                "Product", required=True, 
-                max_chars=30),
+                "Product", required=True
+                ),
 
 
             "Quantity" : st.column_config.NumberColumn(
@@ -122,7 +122,7 @@ if button :
         all_dict.update(new_data_dict)  
 
 
-    if not(all([name.strip(), place, book_serial_num, contact_number]) and (not ingrident_quantity.empty or not new_product.empty)):
+    if not(all([name.strip(), place, book_serial_num]) and (not ingrident_quantity.empty or not new_product.empty)):
 
         placeholder.error("All FIELDS ARE REQUIRED")
         st.stop()
@@ -143,8 +143,9 @@ if button :
             if obj.insert_record():
                 update_iventory_table(all_dict,update_type="add")
                 placeholder.success(f"{obj.name}'s record inserted sucessfully")
-                time.sleep(1)
-                st.switch_page("./app.py")
+                time.sleep(0.5)
+                st.switch_page("app.py")
+                
 
 
         except Exception as e:

@@ -31,7 +31,7 @@ class DonationRecord:
     @staticmethod
     def get_columns() -> list[str]:
         with sqlite3.connect("./db/madurai.db") as con:
-            table = pd.read_sql("SELECT * FROM donation_records;", con)
+            table = pd.read_sql("SELECT * FROM donation_records ;", con)
             cols = [col for col in table.columns if table[col].dtype != "O"]
             return cols[1:]
         

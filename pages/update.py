@@ -46,8 +46,7 @@ if type(particular_record) == pd.DataFrame:
                                 "Product", options=DonationRecord.get_columns(), 
                                 required=True),
                             "Quantity" : st.column_config.NumberColumn(
-                                "Quant", default=0, min_value=0, 
-                                required=True)
+                                "Quantity", required=True)
                         }, 
                         num_rows="dynamic", 
                         use_container_width=True)
@@ -55,19 +54,20 @@ if type(particular_record) == pd.DataFrame:
 
         if st.form_submit_button("Update", use_container_width=True, type="primary"):
 
-
             if not st.session_state["original_contribution"].equals(st.session_state["edited_contribution"]):
                 
-                data = st.session_state["edited_contribution"].to_dict("split")["data"]
-                data_dict = {key:value for key,value in data}
+                existed_product = {key : value for key, value in st.session_state["original_contribution"].to_dict("split")["data"]}
+                updated_product = {key : value for key, value in st.session_state["edited_contribution"].to_dict("split")["data"]}
                 
                 obj = DonationRecord(
-                    data_dict, name, contact_number,book, place, date, book_serial_num, id)
+                    updated_product, name, contact_number,book, place, date, book_serial_num, id)
                 
-                if obj.update_record(data_dict):
+                if obj.update_record(updated_product):
+
+                    
                     st.success(f"{obj.name}'s record updated sucessfully")
                     time.sleep(1)
-                    st.switch_page("./app.py")
+                    # st.switch_page("./app.py")
                 
                 else:
                     st.error("Something went wrong")
