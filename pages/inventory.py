@@ -15,7 +15,7 @@ def inventory():
         df["book_serial_num"] = df["book_serial_num"].astype(int)
     unit = pd.read_sql("select * from inventory;", con)
 
-    filtered_df = df[df["book_serial_num"] > 1100]
+    filtered_df = df[df["book_serial_num"] > 100]
     req_cols = [col for col in filtered_df.columns if filtered_df[col].dtype != "O"][2:]
     final_df = filtered_df[req_cols].sum().reset_index().rename(columns={"index" : "product", 0 : 'quantity'})
     return final_df.merge(unit, how="left")
