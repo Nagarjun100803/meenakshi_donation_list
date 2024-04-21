@@ -44,7 +44,7 @@ with st.form("Add details"):
 
     col1, col2, col3 = st.columns(3)
     name = col1.text_input("Donar Name")
-    book = col2.selectbox("Book", ["B24", "B25", "B26", "B21","B22", "B23"])
+    book = col2.selectbox("Book", ["B"+ str(i) for i in range(20,50)])
     book_serial_num = col3.text_input("Book Serial Number")
     place = col1.text_input("Place", value="Madurai")
     date = col2.date_input("Date")
