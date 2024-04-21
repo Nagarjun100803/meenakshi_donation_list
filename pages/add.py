@@ -40,12 +40,13 @@ st.set_page_config(
 st.sidebar.image("thirukalyanam.jpg")
 st.markdown("### Add New Contribution")
 
+
 with st.form("Add details"):
 
     col1, col2, col3 = st.columns(3)
-    name = col1.text_input("Donar Name")
-    book = col2.selectbox("Book", ["B"+ str(i) for i in range(20,50)])
-    book_serial_num = col3.text_input("Book Serial Number")
+    name = col2.text_input("Donar Name")
+    book = col3.selectbox("Book", ["B"+ str(i) for i in range(20,50)])
+    book_serial_num = col1.text_input("Book Serial Number")
     place = col1.text_input("Place", value="Madurai")
     date = col2.date_input("Date")
     contact_number = col3.text_input("Contact Number", max_chars=10)
