@@ -10,16 +10,16 @@ def get_units():
         return pd.read_sql("select * from products;", con)
 
 def inventory():
-    with sqlite3.connect("./db/madurai.db") as con:
-        df = pd.read_sql("select * from donation_records;", con)
-        df["book_serial_num"] = df["book_serial_num"].astype(int)
-    unit = pd.read_sql("select * from inventory;", con)
+    df = load_data()
+    unit_df = get_units()
+    
+    req_cols = [col for col in df.columns if df[col].dtype != "O"][1:]
+    filter_df = df[req_cols].sum().reset_index().rename(columns={'index': 'product', 0 : 'quantity'})
 
-    filtered_df = df[df["book_serial_num"] > 100]
-    req_cols = [col for col in filtered_df.columns if filtered_df[col].dtype != "O"][2:]
-    final_df = filtered_df[req_cols].sum().reset_index().rename(columns={"index" : "product", 0 : 'quantity'})
-    return final_df.merge(unit, how="left")
+    final_df =  filter_df.merge(unit_df, how='left')
+    final_df.index += 1
 
+    return final_df
 
 
 st.set_page_config(
